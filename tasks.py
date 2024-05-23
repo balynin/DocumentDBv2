@@ -8,6 +8,12 @@ BROKER_URL = "amqp://localhost"
 BACKEND_URL = 'mongodb://localhost:27017/documents'
 app = Celery('tasks', broker=BROKER_URL, backend=BACKEND_URL)
 
+# app.conf.broker_connection_retry_on_startup = True
+# app.conf.result_backend = 'rpc://'
+# app.conf.task_serializer = 'json'
+# app.conf.result_serializer = 'json'
+# app.conf.accept_content = ['json']
+
 
 @app.task
 def text_recognize():

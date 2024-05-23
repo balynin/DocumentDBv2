@@ -23,8 +23,8 @@ async def get_student_data(id):
 
 from tasks import text_recognize
 @router.get('/analyze/')
-async def analyze_document():
-    await text_recognize.delay()
+def analyze_document():
+    text_recognize.delay()
 
 
 @router.delete("/{id}", response_description="Document data deleted from the database")
