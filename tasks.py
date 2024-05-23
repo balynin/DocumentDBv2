@@ -16,8 +16,8 @@ app = Celery('tasks', broker=BROKER_URL, backend=BACKEND_URL)
 
 
 @app.task
-def text_recognize() -> dict:
-    #document = documents_collection.find_one({"_id": ObjectId(id)})
+async def text_recognize() -> dict:
+    #document = await documents_collection.find_one({"_id": ObjectId(id)})
     text: object = pytesseract.image_to_string(Image.open('./uploads/789.png'))
     sub_id = "123456789hh"
     return {
