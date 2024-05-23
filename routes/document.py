@@ -62,7 +62,6 @@ async def document_upload(file: UploadFile = File(...)):
     document_data: dict = {
                 "pic_name": file.filename,
                 "date": now,
-                "recognized_text": "not recognized yet",
             }
     document = await documents_collection.insert_one(document_data)
     return {"filename": file.filename}
