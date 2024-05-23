@@ -38,19 +38,19 @@ async def retrieve_document(id: str) -> dict:
         return document_helper(document)
 
 
-async def update_document(id: str, data: dict):
-    # Return false if an empty request body is sent.
-    if len(data) < 1:
-        return False
-    document = await documents_collection.find_one({"_id": ObjectId(id)})
-    if document:
-        updated_document = await documents_collection.update_one(
-            {"_id": ObjectId(id)}, {"$set": data}
-        )
-        if updated_document:
-            return True
-        return False
-
+# async def update_document(id: str, data: dict):
+#     # Return false if an empty request body is sent.
+#     if len(data) < 1:
+#         return False
+#     document = await documents_collection.find_one({"_id": ObjectId(id)})
+#     if document:
+#         updated_document = await documents_collection.update_one(
+#             {"_id": ObjectId(id)}, {"$set": data}
+#         )
+#         if updated_document:
+#             return True
+#         return False
+#
 
 async def delete_document(id: str):
     document = await documents_collection.find_one({"_id": ObjectId(id)})
