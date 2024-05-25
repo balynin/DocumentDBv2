@@ -4,7 +4,8 @@ services:
     image: mongo:3.7.9
     restart: always
     container_name: db_app
-    command: --port 27017
+    ports:
+      - '27017:27017'
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -22,7 +23,7 @@ services:
     build:
       context: .
     container_name: fastapi_app
-    command: ["/app/start_app.sh"]
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
     ports:
       - 8007:8000
     depends_on:
@@ -33,6 +34,8 @@ services:
     build:
       context: .
     container_name: celery_app
-    command: ["/app/start_celery.sh"]
+    command:
+      celery -A celery worker
+      --loglevel INFO
     depends_on:
       - redis

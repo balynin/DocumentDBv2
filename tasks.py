@@ -4,12 +4,12 @@ import pytesseract
 from bson.objectid import ObjectId
 from pymongo import MongoClient
 
-client = MongoClient("mongodb://fastapi_app:27017/")
+client = MongoClient("mongodb://root:example@mongo:27017/")
 db = client.documents
 collection = db.documents_collection
 
-BROKER_URL: str = "redis://redis:6379/0"
-BACKEND_URL: str = 'redis://redis:6379/0'
+BROKER_URL: str = "redis://redis:6379"
+BACKEND_URL: str = 'redis://redis:6379'
 app = Celery('tasks', broker=BROKER_URL, backend=BACKEND_URL)
 
 @app.task
