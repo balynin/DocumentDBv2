@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+  db:
+    image: mongo:3.7.9
+    restart: always
+    container_name: db_app
+    command: --port 27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    expose:
+      - 27017
+
+  redis:
+    image: redis:7
+    container_name: redis_app
+    command: --port 6379
+    expose:
+      - 6379
+
+  app:
+    build:
+      context: .
+    container_name: fastapi_app
+    command: ["/app/start_app.sh"]
+    ports:
+      - 8007:8000
+    depends_on:
+      - db
+      - redis
+
+  celery:
+    build:
+      context: .
+    container_name: celery_app
+    command: ["/app/start_celery.sh"]
+    depends_on:
+      - redis

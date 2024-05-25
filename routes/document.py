@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Body, UploadFile, HTTPException, File
 import os, shutil, time
+from tasks import text_recognize
+from bson.objectid import ObjectId
 
-from database import add_document, delete_document, retrieve_document, retrieve_documents, update_document, documents_collection
-from models.document import ErrorResponseModel, ResponseModel, DocumentSchema, UpdateDocumentModel
+from database import delete_document, retrieve_document, retrieve_documents, documents_collection
+from models.document import ErrorResponseModel, ResponseModel
+from database import collection
 
 router = APIRouter()
 
 @router.get("/", response_description="Documents retrieved")
-async def get_students():
+async def get_documents():
     documents = await retrieve_documents()
     if documents:
         return ResponseModel(documents, "Documents data retrieved successfully")
@@ -15,20 +18,24 @@ async def get_students():
 
 
 @router.get("/{id}", response_description="Document data retrieved")
-async def get_student_data(id):
+async def get_document_data(id):
     student = await retrieve_document(id)
     if student:
         return ResponseModel(student, "Document data retrieved successfully")
     return ErrorResponseModel("An error occurred.", 404, "Document doesn't exist.")
 
-from tasks import text_recognize
-@router.get('/analyze/')
-def analyze_document():
-    text_recognize.delay()
+
+@router.get('/analyze/{id}')
+def analyze_document(id: str):
+    result = text_recognize.delay(id)
+    text = result.get(timeout=1000)
+    filter = {'_id': ObjectId(id)}
+    newvalues = {"$set": {'recognized_text': text}}
+    collection.update_one(filter, newvalues)
 
 
 @router.delete("/{id}", response_description="Document data deleted from the database")
-async def delete_student_data(id: str):
+async def delete_document_data(id: str):
     deleted_student = await delete_document(id)
     if deleted_student:
         return ResponseModel(
@@ -62,6 +69,7 @@ async def document_upload(file: UploadFile = File(...)):
     document_data: dict = {
                 "pic_name": file.filename,
                 "date": now,
+                "recognized_text": "not recognized yet"
             }
     document = await documents_collection.insert_one(document_data)
     return {"filename": file.filename}

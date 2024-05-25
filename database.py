@@ -1,19 +1,24 @@
 import motor.motor_asyncio
+from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
+# асинхронный драйвер к МонгоДБ
+client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://fastapi_app:27017")
 database = client.documents
 documents_collection = database.get_collection("documents_collection")
+# Синхронный драйвер к МонгоДБ
+client = MongoClient("mongodb://fastapi_app:27017/")
+db = client.documents
+collection = db.documents_collection
 
 
-# helpers
 
 def document_helper(document) -> dict:
     return {
         "id": str(document["_id"]),
         "pic_name": document["pic_name"],
         "date": document["date"],
-        "recognized_text": document["recognized_text"],
+        "recognized_text": document["recognized_text"]
     }
 
 
@@ -24,33 +29,17 @@ async def retrieve_documents():
     return documents
 
 
-# Add a new student into to the database
 async def add_document(document_data: dict) -> dict:
     document = await documents_collection.insert_one(document_data)
     new_document = await documents_collection.find_one({"_id": document.inserted_id})
     return document_data(new_document)
 
 
-# Retrieve a student with a matching ID
 async def retrieve_document(id: str) -> dict:
     document = await documents_collection.find_one({"_id": ObjectId(id)})
     if document:
         return document_helper(document)
 
-
-# async def update_document(id: str, data: dict):
-#     # Return false if an empty request body is sent.
-#     if len(data) < 1:
-#         return False
-#     document = await documents_collection.find_one({"_id": ObjectId(id)})
-#     if document:
-#         updated_document = await documents_collection.update_one(
-#             {"_id": ObjectId(id)}, {"$set": data}
-#         )
-#         if updated_document:
-#             return True
-#         return False
-#
 
 async def delete_document(id: str):
     document = await documents_collection.find_one({"_id": ObjectId(id)})

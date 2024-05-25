@@ -11,7 +11,8 @@ class DocumentSchema(BaseModel):
         json_schema_extra = {
             "example": {
                 "pic_name": "test.jpg",
-                "date": "1716295282.847"
+                "date": "1716295282.847",
+                "recognized_text": "not recognized yet"
             }
         }
 
@@ -26,6 +27,7 @@ class UpdateDocumentModel(BaseModel):
             "example": {
                 "pic_name": "test.jpg",
                 "date": "1716295282.847",
+                "recognized_text": "not recognized yet"
             }
         }
 
