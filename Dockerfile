@@ -4,8 +4,12 @@ RUN mkdir /app
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY . .
+
+RUN apt update \
+  && apt -y install tesseract-ocr \
+  && apt -y install tesseract-ocr-rus
+
 
 RUN pip install -r requirements.txt
 
-COPY . .

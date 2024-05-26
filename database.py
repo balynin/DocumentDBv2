@@ -3,11 +3,11 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 # асинхронный драйвер к МонгоДБ
-client = motor.motor_asyncio.AsyncIOMotorClient("mongo://root:example@mongo:27017")
+client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://admin:admin_password@db:27017")
 database = client.documents
 documents_collection = database.get_collection("documents_collection")
 # Синхронный драйвер к МонгоДБ
-client = MongoClient("mongodb://root:example@mongo:27017/")
+client = MongoClient("mongodb://admin:admin_password@db:27017/")
 db = client.documents
 collection = db.documents_collection
 
